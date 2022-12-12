@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { fetchPictures } from 'services/picturesAPI';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
@@ -27,13 +29,16 @@ export class App extends Component {
     const prevPage = prevState.page;
     const { searchQuery, page } = this.state;
 
-    if (prevQuery !== searchQuery || prevPage !== page) {
+    if (prevPage !== page && prevQuery === searchQuery) {
       this.setState({ isLoading: true, isLoadMoreBtnShown: true });
 
       fetchPictures(searchQuery, page)
         .then(({ data: { hits } }) => {
           if (hits.length < 12) {
             this.setState({ isLoadMoreBtnShown: false });
+          }
+          if (hits.length === 0) {
+            alert('Bad search, try some else');
           }
           this.setState(prevState => {
             return { pictures: [...prevState.pictures, ...hits] };
@@ -43,10 +48,17 @@ export class App extends Component {
         .finally(() => this.setState({ isLoading: false }));
     }
     if (prevQuery !== searchQuery) {
-      this.setState({ isLoading: true });
+      this.setState({ isLoading: true, isLoadMoreBtnShown: true });
 
       fetchPictures(searchQuery, page)
-        .then(({ data: { hits } }) => this.setState({ pictures: [...hits] }))
+        .then(({ data: { hits } }) => {
+          if (hits.length < 12) {
+            this.setState({ isLoadMoreBtnShown: false });
+          }
+          if (hits.length === 0) {
+            alert('Bad search, try some else');
+          }
+          this.setState({ pictures: [...hits] })})
         .catch(console.log)
         .finally(() => this.setState({ isLoading: false }));
     }
@@ -71,6 +83,7 @@ export class App extends Component {
       <div className="container">
         <Searchbar onSubmit={this.onSubmit} />
         <ImageGallery pictures={this.state.pictures} />
+        <ToastContainer/>
         {isLoading && <Loader />}
         {isLoadMoreBtnShown && (
           <Button handlerLoadMoreBtn={this.handlerLoadMoreBtn} />
