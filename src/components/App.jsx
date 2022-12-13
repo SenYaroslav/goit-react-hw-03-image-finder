@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { fetchPictures } from 'services/picturesAPI';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
@@ -83,7 +81,6 @@ export class App extends Component {
       <div className="container">
         <Searchbar onSubmit={this.onSubmit} />
         <ImageGallery pictures={this.state.pictures} />
-        <ToastContainer/>
         {isLoading && <Loader />}
         {isLoadMoreBtnShown && (
           <Button handlerLoadMoreBtn={this.handlerLoadMoreBtn} />
