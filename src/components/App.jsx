@@ -28,37 +28,44 @@ export class App extends Component {
     const { searchQuery, page } = this.state;
 
     if (prevPage !== page && prevQuery === searchQuery) {
-      this.setState({ isLoading: true, });
+      this.setState({ isLoading: true });
 
       fetchPictures(searchQuery, page)
         .then(({ data: { hits } }) => {
+          if (hits.length === 12) {
+            this.setState(prevState => {
+              return {
+                pictures: [...prevState.pictures, ...hits],
+                isLoadMoreBtnShown: true,
+              };
+            });
+          }
           if (hits.length < 12) {
             this.setState({ isLoadMoreBtnShown: false });
           }
           if (hits.length === 0) {
+            this.setState({ pictures: [] });
             alert('Bad search, try some else');
           }
-          this.setState(prevState => {
-            return { pictures: [...prevState.pictures, ...hits], isLoadMoreBtnShown: true  };
-          });
         })
         .catch(console.log)
         .finally(() => this.setState({ isLoading: false }));
     }
     if (prevQuery !== searchQuery) {
-      this.setState({ isLoading: true});
+      this.setState({ isLoading: true });
 
       fetchPictures(searchQuery, page)
         .then(({ data: { hits } }) => {
+          if (hits.length === 12) {
+            this.setState({ pictures: [...hits], isLoadMoreBtnShown: true });
+          }
           if (hits.length < 12) {
             this.setState({ isLoadMoreBtnShown: false });
           }
           if (hits.length === 0) {
+            this.setState({ pictures: [] });
             alert('Bad search, try some else');
           }
-          if (hits.length === 12) {
-
-          this.setState({ pictures: [...hits], isLoadMoreBtnShown: true })}
         })
         .catch(console.log)
         .finally(() => this.setState({ isLoading: false }));
