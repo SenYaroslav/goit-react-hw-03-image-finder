@@ -56,18 +56,17 @@ export class App extends Component {
           if (hits.length === 0) {
             alert('Bad search, try some else');
           }
-          this.setState({ pictures: [...hits] })})
+          this.setState({ pictures: [...hits] });
+        })
         .catch(console.log)
         .finally(() => this.setState({ isLoading: false }));
     }
   }
 
   handlerLoadMoreBtn = () => {
-    this.setState(prevState => {
-      return {
-        page: (prevState.page += 1),
-      };
-    });
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
   };
 
   onModalClose = e => {
